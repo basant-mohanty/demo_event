@@ -48,6 +48,10 @@ export async function createCustomerCreateSubscription(
             resourceTypeId: 'customer',
             types: ['CustomerCreated'],
           },
+          {
+            resourceTypeId: 'product',
+            types: ['ProductCreated', 'ProductPublished'],
+          },
         ],
       },
     })
