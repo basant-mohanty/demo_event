@@ -11,9 +11,8 @@ import { logger } from '../utils/logger.utils';
  * @param {Response} response The express response
  * @returns
  */
-export const post = async (request: Request, response: Response) => {
-  let customerId = undefined;
-
+export const eventHandler = async (request: Request, response: Response) => {
+  logger.info('request:::', request);
   // Check request body
   if (!request.body) {
     logger.error('Missing request body.');
@@ -28,37 +27,16 @@ export const post = async (request: Request, response: Response) => {
 
   // Receive the Pub/Sub message
   const pubSubMessage = request.body.message;
-
+  logger.info('pubSubMessage:::', pubSubMessage);
   // For our example we will use the customer id as a var
   // and the query the commercetools sdk with that info
   const decodedData = pubSubMessage.data
     ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
     : undefined;
-
+  logger.info('decodedData:::', decodedData);
   if (decodedData) {
     const jsonData = JSON.parse(decodedData);
-
-    customerId = jsonData.customer.id;
-  }
-
-  if (!customerId) {
-    throw new CustomError(
-      400,
-      'Bad request: No customer id in the Pub/Sub message'
-    );
-  }
-
-  try {
-    const customer = await createApiRoot()
-      .customers()
-      .withId({ ID: Buffer.from(customerId).toString() })
-      .get()
-      .execute();
-
-    // Execute the tasks in need
-    logger.info(customer);
-  } catch (error) {
-    throw new CustomError(400, `Bad request: ${error}`);
+    logger.info('jsonData:::', jsonData);
   }
 
   // Return the response for the client
